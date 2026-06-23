@@ -40,7 +40,7 @@
 ### 2.1 系统状态
 
 **状态变量** (19维):
-$$
+```
 x = [h_com, q_b, q_j]
     ├─ h_com: 质心动量 (6维)
     │   ├─ 线动量 (3维): m * v_com
@@ -50,20 +50,20 @@ x = [h_com, q_b, q_j]
     │   └─ 四元数 (4维): [w, x, y, z]
     └─ q_j: 关节角度 (12维)
         └─ 4条腿 × 3个关节
-$$
+```
 
 **控制输入** (24维):
-$$
+```
 u = [f_c, v_j]
     ├─ f_c: 接触力 (12维)
     │   └─ 4脚 × 3维力 [f_x, f_y, f_z]
     └─ v_j: 关节速度 (12维)
-$$
+```
 
 ### 2.2 动力学模型
 
 **质心动力学** (简化模型):
-$$
+```
 ḣ_com = A * h_com + B * f_c + g
 
 其中:
@@ -71,24 +71,24 @@ $$
   A = [0, 0; 0, 0]      (系统矩阵)
   B = [I_3, 0; 0, I_3]  (输入矩阵)
   g = [0, 0, -m*g, 0, 0, 0]^T  (重力)
-$$
+```
 
 **广义坐标动力学** (完整模型):
 $$
-M(q) * q̈ + C(q, q̇) * q̇ + g(q) = S * τ + J^T * f_c
+\mathbf{M}(q) * \ddot{q} + \mathbf{C}(q, \dot{q}) * \dot{q} + g(q) = S * \boldsymbol{\tau} + J^{T} * \mathbf{f}_{c}
 
-其中:
-  M(q): 惯量矩阵 (19×19)
-  C(q, q̇): 科氏力矩阵
-  g(q): 重力向量
-  S: 选择矩阵 (选择关节扭矩)
-  J: 雅可比矩阵
+where:
+  \mathbf{M}(q): inertia matrix (19\times19)
+  \mathbf{C}(q, \dot{q}): Coriolis matrix
+  g(q): gravity vector
+  S: selection matrix (selection matrix for joint torques)
+  J: Jacobian matrix
 $$
 
 ### 2.3 优化问题
 
 **目标函数**:
-$$
+```
 min Σ_{k=0}^{N-1} [ (x_k - x_ref_k)^T Q (x_k - x_ref_k) 
                     + (u_k - u_ref_k)^T R (u_k - u_ref_k) ]
 + (x_N - x_ref_N)^T Q_f (x_N - x_ref_N)
@@ -98,38 +98,38 @@ min Σ_{k=0}^{N-1} [ (x_k - x_ref_k)^T Q (x_k - x_ref_k)
   R: 输入权重矩阵 (24×24)
   Q_f: 终端权重矩阵
   N: 预测时域 (通常 50 步)
-$$
+```
 
 **约束条件**:
 
 1. **动力学约束**:
 $$
-x_{k+1} = f(x_k, u_k)  (离散化动力学)
+x_{k+1} = f(\mathbf{x}_{k}, \mathbf{u}_{k})  (discrete dynamics)
 $$
 
 2. **摩擦锥约束**:
 $$
-√(f_x² + f_y²) ≤ μ * f_z
-f_z ≥ 0
+\sqrt(\mathbf{f}_{x}^{2} + \mathbf{f}_{y}^{2}) \leq \mu * \mathbf{f}_{z}
+\mathbf{f}_{z} \geq 0
 
-线性化近似:
-  f_x ≤ μ * f_z
-  -f_x ≤ μ * f_z
-  f_y ≤ μ * f_z
-  -f_y ≤ μ * f_z
+linearized approximation:
+  \mathbf{f}_{x} \leq \mu * \mathbf{f}_{z}
+  -\mathbf{f}_{x} \leq \mu * \mathbf{f}_{z}
+  \mathbf{f}_{y} \leq \mu * \mathbf{f}_{z}
+  -\mathbf{f}_{y} \leq \mu * \mathbf{f}_{z}
 $$
 
 3. **接触约束**:
-$$
+```
 支撑脚: v_foot = 0
 摆动脚: v_foot = v_ref (参考轨迹)
-$$
+```
 
 4. **关节限位**:
-$$
+```
 q_min ≤ q ≤ q_max
 τ_min ≤ τ ≤ τ_max
-$$
+```
 
 ## 3. 代码分析
 
