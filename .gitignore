@@ -1,0 +1,43 @@
+# 第三方仓库（使用 git submodule 管理）
+legged_control/
+ocs2/
+pinocchio/
+hpp-fcl/
+ocs2_robotic_assets/
+
+# 编译产物
+build/
+devel/
+install/
+log/
+*.pyc
+__pycache__/
+
+# 临时文件
+*.log
+*.tmp
+*.bak
+*~
+
+# IDE 和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# ROS 相关
+.catkin_tools/
+.settings/
+.project
+.cproject
+
+# 调试文件
+core
+*.core
+gmon.out
+
+# 其他
+Thumbs.db
+*.cache
+*.orig
