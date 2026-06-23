@@ -74,16 +74,17 @@ u = [f_c, v_j]
 ```
 
 **广义坐标动力学** (完整模型):
-$$
-\mathbf{M}(q) * \ddot{q} + \mathbf{C}(q, \dot{q}) * \dot{q} + g(q) = S * \boldsymbol{\tau} + J^{T} * \mathbf{f}_{c}
 
-where:
-  \mathbf{M}(q): inertia matrix (19\times19)
-  \mathbf{C}(q, \dot{q}): Coriolis matrix
-  g(q): gravity vector
-  S: selection matrix (selection matrix for joint torques)
-  J: Jacobian matrix
 $$
+\mathbf{M}(q) \cdot \ddot{\mathbf{q}} + \mathbf{C}(q, \dot{\mathbf{q}}) \cdot \dot{\mathbf{q}} + \mathbf{g}(q) = \mathbf{S} \boldsymbol{\tau} + \mathbf{J}^{T} \cdot \mathbf{f}_c
+$$
+
+其中：
+- $\mathbf{M}(q)$：inertia matrix (19×19)
+- $\mathbf{C}(q, \dot{\mathbf{q}})$：Coriolis matrix
+- $\mathbf{g}(q)$：gravity vector
+- $\mathbf{S}$：selection matrix (selection matrix for joint torques)
+- $\mathbf{J}$：Jacobian matrix
 
 ### 2.3 优化问题
 
@@ -103,20 +104,25 @@ min Σ_{k=0}^{N-1} [ (x_k - x_ref_k)^T Q (x_k - x_ref_k)
 **约束条件**:
 
 1. **动力学约束**:
+
 $$
+
 x_{k+1} = f(\mathbf{x}_{k}, \mathbf{u}_{k})  (discrete dynamics)
+
 $$
 
 2. **摩擦锥约束**:
+
 $$
+
 \sqrt(\mathbf{f}_{x}^{2} + \mathbf{f}_{y}^{2}) \leq \mu * \mathbf{f}_{z}
 \mathbf{f}_{z} \geq 0
-
 linearized approximation:
-  \mathbf{f}_{x} \leq \mu * \mathbf{f}_{z}
-  -\mathbf{f}_{x} \leq \mu * \mathbf{f}_{z}
-  \mathbf{f}_{y} \leq \mu * \mathbf{f}_{z}
-  -\mathbf{f}_{y} \leq \mu * \mathbf{f}_{z}
+\mathbf{f}_{x} \leq \mu * \mathbf{f}_{z}
+-\mathbf{f}_{x} \leq \mu * \mathbf{f}_{z}
+\mathbf{f}_{y} \leq \mu * \mathbf{f}_{z}
+-\mathbf{f}_{y} \leq \mu * \mathbf{f}_{z}
+
 $$
 
 3. **接触约束**:
