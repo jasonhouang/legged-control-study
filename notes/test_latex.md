@@ -17,9 +17,9 @@ $$
 $$
 
 其中：
-- \(\mathbf{x}_k\)：状态变量
-- \(\mathbf{u}_k\)：控制输入
-- \(\mathbf{Q}\), \(\mathbf{R}\)：权重矩阵
+- $\mathbf{x}_k$：状态变量
+- $\mathbf{u}_k$：控制输入
+- $\mathbf{Q}$, $\mathbf{R}$：权重矩阵
 
 ## 错误的格式
 
