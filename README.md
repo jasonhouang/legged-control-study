@@ -193,6 +193,56 @@ roslaunch legged_unitree_description empty_world.launch
 - 适配到人形机器人
 - 实现 Sim2Real 迁移
 
+## 📐 LaTeX 公式格式指南
+
+本项目使用 GitHub 渲染 LaTeX 数学公式，需要注意以下格式规则：
+
+### 行内公式
+
+行内公式使用 `$...$` 格式，**`$` 前面必须有空格**：
+
+✅ 正确：
+```markdown
+这是公式 $E = mc^2$ 的示例。
+- 第一项： $a = b$
+```
+
+❌ 错误：
+```markdown
+这是公式$E = mc^2$ 的示例。  （缺少空格）
+- 第一项：$a = b$              （缺少空格）
+```
+
+### 块级公式
+
+块级公式使用 `$$...$$` 格式，**前后必须有空行，内部不能有空行**：
+
+✅ 正确：
+```markdown
+这是块级公式：
+
+$$
+\mathbf{M}(q) \ddot{\mathbf{q}} + \mathbf{C}(q, \dot{\mathbf{q}}) \dot{\mathbf{q}} = \boldsymbol{\tau}
+$$
+
+其中：
+```
+
+❌ 错误：
+```markdown
+这是块级公式：
+$$                                    （前面缺少空行）
+\mathbf{M}(q) \ddot{\mathbf{q}}
+
++ \mathbf{C}(q, \dot{\mathbf{q}})    （内部不能有空行）
+$$
+这是下一段                            （后面缺少空行）
+```
+
+### 参考示例
+
+完整的测试示例见 `notes/test_inline_latex.md`。
+
 ## 📝 更新日志
 
 - **2026-06-22**: 初始化项目，克隆 legged_control 和依赖库
