@@ -106,15 +106,12 @@ min Σ_{k=0}^{N-1} [ (x_k - x_ref_k)^T Q (x_k - x_ref_k)
 1. **动力学约束**:
 
 $$
-
 x_{k+1} = f(\mathbf{x}_{k}, \mathbf{u}_{k})  (discrete dynamics)
-
 $$
 
 2. **摩擦锥约束**:
 
 $$
-
 \sqrt(\mathbf{f}_{x}^{2} + \mathbf{f}_{y}^{2}) \leq \mu * \mathbf{f}_{z}
 \mathbf{f}_{z} \geq 0
 linearized approximation:
@@ -122,7 +119,6 @@ linearized approximation:
 -\mathbf{f}_{x} \leq \mu * \mathbf{f}_{z}
 \mathbf{f}_{y} \leq \mu * \mathbf{f}_{z}
 -\mathbf{f}_{y} \leq \mu * \mathbf{f}_{z}
-
 $$
 
 3. **接触约束**:

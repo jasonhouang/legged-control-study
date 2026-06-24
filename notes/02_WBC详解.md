@@ -56,15 +56,15 @@ x_wbc = [q̈, f_c, τ]
 ### 2.2 动力学约束
 
 **浮动基动力学**:
+
 $$
 \mathbf{M}(q) * \ddot{q} + \mathbf{C}(q, \dot{q}) * \dot{q} + g(q) = S * \boldsymbol{\tau} + J^{T} * \mathbf{f}_{c}
-
 where:
-  \mathbf{M}(q): inertia matrix (19\times19)
-  \mathbf{C}(q, \dot{q}): Coriolis matrix (19\times1)
-  g(q): gravity vector (19\times1)
-  S: selection matrix (19\times12)
-  J: Jacobian matrix (3\times19 per foot)
+\mathbf{M}(q): inertia matrix (19\times19)
+\mathbf{C}(q, \dot{q}): Coriolis matrix (19\times1)
+g(q): gravity vector (19\times1)
+S: selection matrix (19\times12)
+J: Jacobian matrix (3\times19 per foot)
 $$
 
 **展开形式**:
@@ -116,16 +116,16 @@ WBC 使用**分层优化**，任务优先级从高到低：
 
 **零空间投影**确保高优先级任务不受影响：
 
-```
+$$
 对于优先级 k:
-  x_k = x_{k-1} + Z_{k-1} * (A_k * Z_{k-1})^# * (b_k - A_k * x_{k-1})
-
+x_k = x_{k-1} + Z_{k-1} * (A_k * Z_{k-1})^# * (b_k - A_k * x_{k-1})
 其中:
-  Z_{k-1}: 优先级 1 到 k-1 的零空间投影矩阵
-  ^#: 伪逆
-```
+Z_{k-1}: 优先级 1 到 k-1 的零空间投影矩阵
+^#: 伪逆
+$$
 
 **零空间投影矩阵**:
+
 $$
 Z_0 = I
 Z_k = Z_{k-1} * (I - (A_k \cdot Z_{k-1})^# * (A_k \cdot Z_{k-1}))
