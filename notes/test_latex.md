@@ -8,14 +8,12 @@
 
 $$
 \mathbf{M}(q) \ddot{\mathbf{q}} + \mathbf{C}(q, \dot{\mathbf{q}}) \dot{\mathbf{q}} + \mathbf{g}(q) = \mathbf{S} \boldsymbol{\tau} + \mathbf{J}^T \mathbf{f}_c
-
 $$
 
 带说明的公式：
 
 $$
 \min_{\mathbf{u}} \sum_{k=0}^{N-1} \left[ (\mathbf{x}_k - \mathbf{x}_{ref,k})^T \mathbf{Q} (\mathbf{x}_k - \mathbf{x}_{ref,k}) + (\mathbf{u}_k - \mathbf{u}_{ref,k})^T \mathbf{R} (\mathbf{u}_k - \mathbf{u}_{ref,k}) \right]
-
 $$
 
 其中：
@@ -29,14 +27,12 @@ $$
 
 $$
 x = y
-
 $$
 
 ### 错误2：公式中有前导空格
 
 $$
 \mathbf{M}(q): \text{inertia matrix}
-
 $$
 
 ### 错误3：使用代码块
@@ -44,7 +40,6 @@ $$
 
 $$
 x = y
-
 $$
 
 ```
