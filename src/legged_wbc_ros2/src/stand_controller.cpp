@@ -122,11 +122,12 @@ private:
                                  msg->linear.y * msg->linear.y + 
                                  msg->angular.z * msg->angular.z);
         
-        // 进入行走模式（移除 pose_ready 检查）
-        if (speed > 0.05 && !walking_mode_) {
+        // 进入行走模式（移除 pose_ready 检查，但增加稳定时间要求）
+        double elapsed = (this->now() - start_time_).seconds();
+        if (speed > 0.05 && !walking_mode_ && elapsed > 5.0) {  // 至少稳定 5 秒
             walking_mode_ = true;
-            RCLCPP_INFO(this->get_logger(), "Entering walking mode: vx=%.2f, vy=%.2f, omega=%.2f",
-                       msg->linear.x, msg->linear.y, msg->angular.z);
+            RCLCPP_INFO(this->get_logger(), "Entering walking mode after %.1fs: vx=%.2f, vy=%.2f, omega=%.2f",
+                       elapsed, msg->linear.x, msg->linear.y, msg->angular.z);
             gait_generator_->reset();
         } else if (speed < 0.03 && walking_mode_) {
             walking_mode_ = false;

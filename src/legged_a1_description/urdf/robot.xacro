@@ -92,8 +92,8 @@
         </xacro:macro>
 
         <xacro:leg_ros2_control prefix="LF"/>
-        <xacro:leg_ros2_control prefix="RF"/>
         <xacro:leg_ros2_control prefix="LH"/>
+        <xacro:leg_ros2_control prefix="RF"/>
         <xacro:leg_ros2_control prefix="RH"/>
     </ros2_control>
 
