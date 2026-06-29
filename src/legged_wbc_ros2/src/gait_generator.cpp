@@ -149,7 +149,7 @@ Eigen::Vector3d GaitGenerator::inverseKinematics(const Eigen::Vector3d& foot_pos
     double alpha = std::atan2(-x, len_yz);  // 注意：这里使用 -x，因为大腿向前摆动时 x > 0
     double beta = std::acos((thigh_length_ * thigh_length_ + len_xz * len_xz - calf_length_ * calf_length_) / 
                             (2 * thigh_length_ * len_xz));
-    double hfe = alpha - beta;  // 注意：这里使用 - beta，因为大腿向后摆动
+    double hfe = -(alpha - beta);  // 取反以匹配 URDF 符号约定（正方向为大腿向前）
     
     // Debug: 输出关节角度
     if (ik_counter % 200 == 0) {
