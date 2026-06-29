@@ -4,16 +4,12 @@
 namespace legged_controllers {
 
 GaitGenerator::GaitGenerator()
-    : swing_height_(0.08)      // 抬腿高度 8cm
+    : swing_height_(0.0)       // 抬腿高度 0cm（禁用摆动相抬腿）
     , phase_(0.0)
     , vx_(0.0)
     , vy_(0.0)
     , omega_(0.0)
 {
-    // 初始化关节位置为默认站立姿态
-    joint_positions_ = Eigen::VectorXd::Zero(12);
-    joint_velocities_ = Eigen::VectorXd::Zero(12);
-    
     // 默认站立时足端位置（相对于髋关节）
     // 根据A1的尺寸：大腿0.2m，小腿0.2m，髋关节偏移0.0838m
     // 站立时足端应该在髋关节下方约0.3m处

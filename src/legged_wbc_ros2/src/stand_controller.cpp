@@ -40,7 +40,7 @@ public:
                          0.20,  0.72, -1.44};  // RH
         
         // Gravity compensation torques (approximate)
-        double leg_torque = mass * 9.81 / 4.0 * 0.12;
+        double leg_torque = mass * 9.81 / 4.0 * 0.15;  // 力臂 0.15m
         gravity_comp_ = {
             0.0, leg_torque, -leg_torque * 0.5,
             0.0, leg_torque, -leg_torque * 0.5,

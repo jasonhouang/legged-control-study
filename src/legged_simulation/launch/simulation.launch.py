@@ -77,7 +77,7 @@ def generate_launch_description():
         parameters=[{
             'control_frequency': 200.0,
             'kp': 1.0,
-            'kd': 20.0,
+            'kd': 5.0,
             'robot_mass': 13.5,
             'ramp_time': 3.0,
         }],
