@@ -28,6 +28,10 @@ GaitGenerator::GaitGenerator()
     trot_gait_.eventPhases = {0.5};  // 在相位0.5切换模式
     trot_gait_.modeSequence = {LF_RH, RF_LH};  // 对角腿交替
     
+    // 初始化关节位置向量（12个关节：4条腿 × 3个关节）
+    joint_positions_.resize(12);
+    joint_positions_.setZero();
+    
     // 计算初始关节角度 (顺序: LF, LH, RF, RH)
     joint_positions_.segment<3>(0) = inverseKinematics(default_foot_pos_lf_, true, true);
     joint_positions_.segment<3>(3) = inverseKinematics(default_foot_pos_lh_, true, false);
