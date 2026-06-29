@@ -1,0 +1,30 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz (降低到 100 Hz 以匹配 Gazebo)
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    joint_group_effort_controller:
+      type: effort_controllers/JointGroupEffortController
+
+joint_group_effort_controller:
+  ros__parameters:
+    joints:
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+      - RF_HAA
+      - RF_HFE
+      - RF_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+    command_interfaces:
+      - effort
+    state_interfaces:
+      - position
+      - velocity

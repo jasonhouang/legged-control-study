@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="a1">
+
+    <xacro:include filename="$(find legged_a1_description)/urdf/materials.xacro"/>
+    <xacro:include filename="$(find legged_a1_description)/urdf/leg.xacro"/>
+    <xacro:include filename="$(find legged_a1_description)/urdf/imu.xacro"/>
+    <xacro:include filename="$(find legged_a1_description)/urdf/const.xacro"/>
+
+    <xacro:property name="mesh_path" value="$(find legged_a1_description)/meshes/a1"/>
+
+    <!-- Base link -->
+    <link name="base">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="${mesh_path}/trunk.dae" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="${trunk_length} ${trunk_width} ${trunk_height}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <origin rpy="0 0 0" xyz="${trunk_com_x} ${trunk_com_y} ${trunk_com_z}"/>
+            <mass value="${trunk_mass}"/>
+            <inertia
+                    ixx="${trunk_ixx}" ixy="${trunk_ixy}" ixz="${trunk_ixz}"
+                    iyy="${trunk_iyy}" iyz="${trunk_iyz}"
+                    izz="${trunk_izz}"/>
+        </inertial>
+    </link>
+
+    <!-- IMU -->
+    <xacro:IMU connected_to="base" imu_name="base_imu" xyz="0. 0. 0." rpy="0. 0. 0."/>
+
+    <!-- Legs -->
+    <xacro:leg prefix="LF" mesh_path="${mesh_path}" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True">
+        <origin rpy="0 0 0" xyz="${leg_offset_x} ${leg_offset_y} 0"/>
+    </xacro:leg>
+
+    <xacro:leg prefix="LH" mesh_path="${mesh_path}" mirror="1" mirror_dae="True" front_hind="-1" front_hind_dae="False">
+        <origin rpy="0 0 0" xyz="${-leg_offset_x} ${leg_offset_y} 0"/>
+    </xacro:leg>
+
+    <xacro:leg prefix="RF" mesh_path="${mesh_path}" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True">
+        <origin rpy="0 0 0" xyz="${leg_offset_x} ${-leg_offset_y} 0"/>
+    </xacro:leg>
+
+    <xacro:leg prefix="RH" mesh_path="${mesh_path}" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False">
+        <origin rpy="0 0 0" xyz="${-leg_offset_x} ${-leg_offset_y} 0"/>
+    </xacro:leg>
+
+    <!-- ros2_control hardware interface -->
+    <ros2_control name="GazeboSimSystem" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <xacro:macro name="leg_ros2_control" params="prefix">
+            <joint name="${prefix}_HAA">
+                <command_interface name="effort">
+                    <param name="min">-${hip_torque_max}</param>
+                    <param name="max">${hip_torque_max}</param>
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+                <param name="initial_position">-0.20</param>
+            </joint>
+            <joint name="${prefix}_HFE">
+                <command_interface name="effort">
+                    <param name="min">-${thigh_torque_max}</param>
+                    <param name="max">${thigh_torque_max}</param>
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+                <param name="initial_position">0.72</param>
+            </joint>
+            <joint name="${prefix}_KFE">
+                <command_interface name="effort">
+                    <param name="min">-${calf_torque_max}</param>
+                    <param name="max">${calf_torque_max}</param>
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+                <param name="initial_position">-1.44</param>
+            </joint>
+        </xacro:macro>
+
+        <xacro:leg_ros2_control prefix="LF"/>
+        <xacro:leg_ros2_control prefix="RF"/>
+        <xacro:leg_ros2_control prefix="LH"/>
+        <xacro:leg_ros2_control prefix="RH"/>
+    </ros2_control>
+
+    <!-- Gazebo ros2_control plugin -->
+    <gazebo>
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find legged_simulation)/config/controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+    <!-- Gazebo JointPositionController plugins for initial pose -->
+    <gazebo>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>LF_HAA</joint_name>
+            <position>-0.20</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>LF_HFE</joint_name>
+            <position>0.72</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>LF_KFE</joint_name>
+            <position>-1.44</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>LH_HAA</joint_name>
+            <position>-0.20</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>LH_HFE</joint_name>
+            <position>0.72</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>LH_KFE</joint_name>
+            <position>-1.44</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>RF_HAA</joint_name>
+            <position>0.20</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>RF_HFE</joint_name>
+            <position>0.72</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>RF_KFE</joint_name>
+            <position>-1.44</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>RH_HAA</joint_name>
+            <position>0.20</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>RH_HFE</joint_name>
+            <position>0.72</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+        <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+            <joint_name>RH_KFE</joint_name>
+            <position>-1.44</position>
+            <p_gain>100.0</p_gain>
+            <i_gain>0.0</i_gain>
+            <d_gain>10.0</d_gain>
+        </plugin>
+    </gazebo>
+
+    <!-- Odometry publisher for base state estimation -->
+    <gazebo>
+        <plugin filename="gz-sim8-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+            <odom_frame>odom</odom_frame>
+            <robot_base_frame>base</robot_base_frame>
+            <odom_topic>/model/a1/odometry</odom_topic>
+            <tf_topic>/model/a1/tf</tf_topic>
+            <odom_publish_frequency>100</odom_publish_frequency>
+        </plugin>
+    </gazebo>
+
+    <!-- IMU sensor plugin -->
+    <gazebo reference="base_imu">
+        <sensor type="imu" name="base_imu">
+            <always_on>true</always_on>
+            <update_rate>200</update_rate>
+            <topic>/imu</topic>
+            <imu>
+                <angular_velocity>
+                    <x><noise type="gaussian"><mean>0</mean><stddev>0.0002</stddev></noise></x>
+                    <y><noise type="gaussian"><mean>0</mean><stddev>0.0002</stddev></noise></y>
+                    <z><noise type="gaussian"><mean>0</mean><stddev>0.0002</stddev></noise></z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x><noise type="gaussian"><mean>0</mean><stddev>0.01</stddev></noise></x>
+                    <y><noise type="gaussian"><mean>0</mean><stddev>0.01</stddev></noise></y>
+                    <z><noise type="gaussian"><mean>0</mean><stddev>0.01</stddev></noise></z>
+                </linear_acceleration>
+            </imu>
+        </sensor>
+    </gazebo>
+
+</robot>

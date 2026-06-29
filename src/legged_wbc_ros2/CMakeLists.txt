@@ -27,6 +27,7 @@ add_library(legged_wbc_lib SHARED
   src/HoQp.cpp
   src/WbcBase.cpp
   src/Task.cpp
+  src/gait_generator.cpp
 )
 ament_target_dependencies(legged_wbc_lib
   rclcpp
@@ -50,6 +51,20 @@ ament_target_dependencies(legged_wbc_node
   tf2_ros
 )
 
+# Stand controller node
+add_executable(stand_controller
+  src/stand_controller.cpp
+)
+target_link_libraries(stand_controller
+  legged_wbc_lib
+)
+ament_target_dependencies(stand_controller
+  rclcpp
+  std_msgs
+  sensor_msgs
+  geometry_msgs
+)
+
 # Install
 install(TARGETS
   legged_wbc_lib
@@ -60,6 +75,7 @@ install(TARGETS
 
 install(TARGETS
   legged_wbc_node
+  stand_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 

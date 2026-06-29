@@ -48,6 +48,12 @@ bool HoQp::solveQp(const Task& task, Eigen::VectorXd& solution) {
         return true;
     }
     
+    // Check if A matrix is zero or near-zero
+    if (task.A.norm() < 1e-10) {
+        solution = Eigen::VectorXd::Zero(task.numVariables);
+        return true;
+    }
+    
     // Check if it's an equality constraint
     bool isEquality = (task.lowerBound.array() == task.upperBound.array()).all();
     
@@ -55,7 +61,14 @@ bool HoQp::solveQp(const Task& task, Eigen::VectorXd& solution) {
         // Solve equality constrained QP: min ||A*x - b||^2
         // Using pseudo-inverse: x = A^+ * b
         Eigen::JacobiSVD<Eigen::MatrixXd> svd(task.A, Eigen::ComputeThinU | Eigen::ComputeThinV);
-        solution = svd.solve(task.b);
+        
+        // Check for numerical issues
+        if (svd.singularValues().size() == 0 || svd.singularValues().minCoeff() < 1e-10) {
+            // Matrix is singular or near-singular, use least squares
+            solution = svd.solve(task.b);
+        } else {
+            solution = svd.solve(task.b);
+        }
         
         // Update null space projector
         // N = I - A^+ * A
